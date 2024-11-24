@@ -12,10 +12,10 @@ public class HomeController {
 	public String home() {
 		return "Hello World";
 	}
-	
-//	@GetMapping("/time")
-//	public String time() {
-//		return "Current time is " + (new Date());
-//	}
-	
+
+	@GetMapping("/time")
+	public String time() {
+		return "Current time is " + (new Date());
+	}
+
 }
