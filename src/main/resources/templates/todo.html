@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<body>
+		<h1>Todo List</h1>
+		
+		<div style="display: flex; flex-direction: row; justify-content: space-around;">
+			<div>
+				<div th:each="todo : ${todos}">
+					<div style="display: flex; flex-direction: column;">
+						<span th:text="${todo.task}"></span>
+						<span th:text="${todo.description}"></span>
+						<span th:text="${todo.createdAt}"></span>
+					</div>
+					<div>X</div>
+				</div>
+			</div>
+			<div>
+				<form action="/todo/new" method="get">
+					<label for="task">Task</label>
+					<input type="text" name="task" id="task"/>
+					<label for="description">Description</label>
+					<input type="text" name="description" id="description"/>
+					<input type="submit" value="Add Task" />
+				</form>	
+			</div>
+		</div>
+		
+	</body>
+</html>
