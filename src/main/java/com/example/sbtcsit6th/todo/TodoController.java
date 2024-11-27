@@ -30,11 +30,4 @@ public class TodoController {
 		return "todo";
 	}
 
-//	@GetMapping("/todo/new/{task}")
-//	public String createNewTodo(@PathVariable("task") String task, Model model) {
-//		TodoService.add(task);
-//		model.addAttribute("todos", TodoService.getAll());
-//		return "todo";
-//	}
-
 }

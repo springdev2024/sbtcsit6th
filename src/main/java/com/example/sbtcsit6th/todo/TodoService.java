@@ -12,7 +12,7 @@ public class TodoService {
 	}
 
 	public static void add(String task, String description) {
-		todoList.add(new Todo(task, description));
+		todoList.add(new Todo());
 	}
 
 	public static void delete(int id) {

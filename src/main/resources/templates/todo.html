@@ -5,13 +5,13 @@
 		
 		<div style="display: flex; flex-direction: row; justify-content: space-around;">
 			<div>
-				<div th:each="todo : ${todos}">
+				<div th:each="todo : ${todos}" style="border: 1px solid black;">
 					<div style="display: flex; flex-direction: column;">
 						<span th:text="${todo.task}"></span>
 						<span th:text="${todo.description}"></span>
 						<span th:text="${todo.createdAt}"></span>
 					</div>
-					<div>X</div>
+					<a href="/delete"><button>X</button></a>
 				</div>
 			</div>
 			<div>
