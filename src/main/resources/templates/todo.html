@@ -11,11 +11,11 @@
 						<span th:text="${todo.description}"></span>
 						<span th:text="${todo.createdAt}"></span>
 					</div>
-					<a href="/delete"><button>X</button></a>
+					 <a th:href="@{/todo/delete/{id}(id=${todo.id})}"><button>X</button></a>
 				</div>
 			</div>
 			<div>
-				<form action="/todo/new" method="get">
+				<form action="/todo/new" method="post">
 					<label for="task">Task</label>
 					<input type="text" name="task" id="task"/>
 					<label for="description">Description</label>
