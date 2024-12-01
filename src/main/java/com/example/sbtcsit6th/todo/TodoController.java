@@ -20,6 +20,8 @@ public class TodoController {
 	@GetMapping("/todo")
 	public String getTodo(Model model) {
 		model.addAttribute("todos", todoRepository.findAll());
+		model.addAttribute("todo", new Todo());
+		model.addAttribute("toCreate", true);
 		return "todo";
 	}
 
@@ -35,8 +37,7 @@ public class TodoController {
 
 		todoRepository.save(todo);
 
-		model.addAttribute("todos", todoRepository.findAll());
-		return "todo";
+		return "redirect:/todo";
 	}
 
 	@GetMapping("/todo/delete/{id}")
@@ -44,26 +45,39 @@ public class TodoController {
 
 		todoRepository.deleteById(id);
 
-		model.addAttribute("todos", todoRepository.findAll());
-
-		return "todo";
+		return "redirect:/todo";
 	}
 
 	@GetMapping("/todo/update/{id}")
+	public String getUpdateTodoPage(@PathVariable("id") int id, Model model) {
+
+		Optional<Todo> optionalTodo = todoRepository.findById(id);
+		if (optionalTodo.isPresent()) {
+			model.addAttribute("todo", optionalTodo.get());
+			model.addAttribute("todos", todoRepository.findAll());
+			model.addAttribute("toCreate", false);
+			return "todo";
+		} else {
+			return "redirect:/todo";
+		}
+
+	}
+
+	@PostMapping("/todo/update/{id}")
 	public String updateTodo(@PathVariable("id") int id, @RequestParam("task") String task,
 			@RequestParam("description") String description, Model model) {
 
 		Optional<Todo> optionalTodo = todoRepository.findById(id);
-		
-		if(optionalTodo.isPresent()) {
+
+		if (optionalTodo.isPresent()) {
 			Todo todo = optionalTodo.get();
 			todo.setTask(task);
 			todo.setDescription(description);
 			todoRepository.save(todo);
 		}
 
-		model.addAttribute("todos", todoRepository.findAll());
-		return "todo";
+		return "redirect:/todo";
+
 	}
 
 }

@@ -12,16 +12,17 @@
 						<span th:text="${todo.createdAt}"></span>
 					</div>
 					 <a th:href="@{/todo/delete/{id}(id=${todo.id})}"><button>X</button></a>
+					 <a th:href="@{/todo/update/{id}(id=${todo.id})}"><button>Edit</button></a>
 				</div>
 			</div>
 			<div>
-				<form action="/todo/new" method="post">
+				<form th:action="${toCreate} ? @{/todo/new} : @{/todo/update/{id}(id=${todo.id})}" method="post" th:object="${todo}">
 					<label for="task">Task</label>
-					<input type="text" name="task" id="task"/>
+					<input type="text" th:field="*{task}" />
 					<label for="description">Description</label>
-					<input type="text" name="description" id="description"/>
-					<input type="submit" value="Add Task" />
-				</form>	
+					<input type="text" th:field="*{description}"/>
+					<input type="submit" th:value="${toCreate} ? 'Add Task' : 'Update Task'" />
+				</form>
 			</div>
 		</div>
 		
