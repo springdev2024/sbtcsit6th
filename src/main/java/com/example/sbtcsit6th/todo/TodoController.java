@@ -40,8 +40,8 @@ public class TodoController {
 		return "redirect:/todo";
 	}
 
-	@GetMapping("/todo/delete/{id}")
-	public String deleteTodo(@PathVariable("id") int id, Model model) {
+	@PostMapping("/todo/delete")
+	public String deleteTodo(@RequestParam("todoID") int id) {
 
 		todoRepository.deleteById(id);
 

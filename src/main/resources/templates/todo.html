@@ -1,27 +1,58 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<style>
+			.todo {
+				border: 1px solid black;
+				border-radius: 8px;
+				padding: 8px 8px;
+			}
+			
+			.todo-title {
+				font-weight: bold;
+			}
+			
+			.todo-desc {
+				
+			}
+			
+			.todo-moment {
+				
+			}
+			
+		</style>
+	</head>
 	<body>
 		<h1>Todo List</h1>
 		
 		<div style="display: flex; flex-direction: row; justify-content: space-around;">
 			<div>
-				<div th:each="todo : ${todos}" style="border: 1px solid black;">
+				<div class="todo" th:each="todo : ${todos}">
 					<div style="display: flex; flex-direction: column;">
-						<span th:text="${todo.task}"></span>
-						<span th:text="${todo.description}"></span>
-						<span th:text="${todo.createdAt}"></span>
+						<span class="todo-title" th:text="${todo.task}"></span>
+						<span class="todo-desc" th:text="${todo.description}"></span>
+						<span class="todo-moment" th:text="${todo.createdAt}"></span>
 					</div>
-					 <a th:href="@{/todo/delete/{id}(id=${todo.id})}"><button>X</button></a>
+					<form action="/todo/delete" method="post">
+						<input type="hidden" name="todoID" th:value="${todo.id}" />
+						<button type="submit">Delete</button>
+					</form>
 					 <a th:href="@{/todo/update/{id}(id=${todo.id})}"><button>Edit</button></a>
 				</div>
 			</div>
 			<div>
 				<form th:action="${toCreate} ? @{/todo/new} : @{/todo/update/{id}(id=${todo.id})}" method="post" th:object="${todo}">
-					<label for="task">Task</label>
-					<input type="text" th:field="*{task}" />
-					<label for="description">Description</label>
-					<input type="text" th:field="*{description}"/>
-					<input type="submit" th:value="${toCreate} ? 'Add Task' : 'Update Task'" />
+					<div style="display: flex; flex-direction: row;">
+						<div>
+							<label for="task">Task</label>
+							<input type="text" th:field="*{task}" />
+						</div>
+						<div>
+							<label for="description">Description</label>
+							<input type="text" th:field="*{description}"/>
+						</div>
+						<input type="submit" th:value="${toCreate} ? 'Add Task' : 'Update Task'" />
+					</div>
 				</form>
 			</div>
 		</div>
