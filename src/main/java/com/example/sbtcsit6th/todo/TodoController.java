@@ -2,6 +2,7 @@ package com.example.sbtcsit6th.todo;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,15 +12,57 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 @Controller
 public class TodoController {
 
 	@Autowired
 	private TodoRepository todoRepository;
 
+	public void setCookieForRequest(HttpServletResponse response) {
+		Cookie cookie = new Cookie("token", new Random().nextInt() + "");
+		cookie.setMaxAge(3600);
+		response.addCookie(cookie);
+	}
+
+	public Cookie getCookieFromRequest(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		Cookie foundCookie = null;
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("token")) {
+					foundCookie = cookie;
+				}
+				System.out.printf(String.format("%s -> %s\n", cookie.getName(), cookie.getValue()));
+			}
+		}
+		return foundCookie;
+	}
+
+	@GetMapping("/login")
+	public String doLoginAndGetTodoPage(HttpServletResponse response, HttpServletRequest request) {
+		Cookie cookie = getCookieFromRequest(request);
+		if (cookie == null) {
+			setCookieForRequest(response);
+		}
+		return "redirect:/todo";
+	}
+
 	@GetMapping("/todo")
-	public String getTodo(Model model) {
-		model.addAttribute("todos", todoRepository.findAll());
+	public String getTodo(Model model, HttpServletRequest request) {
+
+		Cookie cookie = getCookieFromRequest(request);
+		String session = "";
+
+		if (cookie != null) {
+			session = cookie.getValue();
+		}
+
+		model.addAttribute("todos", todoRepository.findBySession(session));
+
 		model.addAttribute("todo", new Todo());
 		model.addAttribute("toCreate", true);
 		return "todo";
@@ -27,15 +70,19 @@ public class TodoController {
 
 	@PostMapping("/todo/new")
 	public String createNewTodo(@RequestParam("task") String task, @RequestParam("description") String description,
-			Model model) {
+			Model model, HttpServletRequest request) {
 
-		Todo todo = new Todo();
-		todo.setTask(task);
-		todo.setDescription(description);
-		todo.setCompleted(false);
-		todo.setCreatedAt(LocalDateTime.now());
+		Cookie cookie = getCookieFromRequest(request);
 
-		todoRepository.save(todo);
+		if (cookie != null) {
+			Todo todo = new Todo();
+			todo.setTask(task);
+			todo.setDescription(description);
+			todo.setCompleted(false);
+			todo.setCreatedAt(LocalDateTime.now());
+			todo.setSession(cookie.getValue());
+			todoRepository.save(todo);
+		}
 
 		return "redirect:/todo";
 	}
