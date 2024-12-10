@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+	<h1>Register</h1>
+
+	<form action="/register" method="post" th:object="${user}">
+		<div>
+			<label for="fullname">Full Name:</label>
+			<input type="text" th:field="*{fullname}" />
+		</div>
+
+		<div>
+			<label for="username">Username:</label>
+			<input type="text" th:field="*{username}" />
+		</div>
+
+		<div>
+			<label for="password">Password:</label>
+			<input type="password" th:field="*{password}" />
+		</div>
+
+		<div>
+			<label for="email">Email:</label>
+			<input type="email" th:field="*{email}" />
+		</div>
+		
+		<div>
+			<input type="submit" value="Register" />
+		</div>
+	</form>
+	
+	<div th:if="${error.hasError}" th:text="${error.error}" style="color: red"></div>
+
+	<p>Already registered? <a href="/login">Login Now</a> </p>
+</body>
+
+</html>
