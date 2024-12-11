@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+	<h1>Login</h1>
+
+	<form action="/login" method="post" th:object="${loginForm}">
+		<div>
+			<label for="username">Username:</label>
+			<input type="text" th:field="*{username}" />
+		</div>
+
+		<div>
+			<label for="password">Password:</label>
+			<input type="password" th:field="*{password}" />
+		</div>
+
+
+		<div>
+			<input type="submit" value="Login" />
+		</div>
+	</form>
+
+	<div th:if="${error.hasError}" th:text="${error.msg}" style="color: red"></div>
+
+	<p>Not already registered? <a href="/register">Register Now</a> </p>
+</body>
+
+</html>

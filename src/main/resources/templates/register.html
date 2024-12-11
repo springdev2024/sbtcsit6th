@@ -30,7 +30,7 @@
 		</div>
 	</form>
 	
-	<div th:if="${error.hasError}" th:text="${error.error}" style="color: red"></div>
+	<div th:if="${error.hasError}" th:text="${error.msg}" style="color: red"></div>
 
 	<p>Already registered? <a href="/login">Login Now</a> </p>
 </body>
