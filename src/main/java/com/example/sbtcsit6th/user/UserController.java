@@ -1,18 +1,28 @@
 package com.example.sbtcsit6th.user;
 
+
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.example.sbtcsit6th.AuthService;
 import com.example.sbtcsit6th.ValidationError;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class UserController {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private AuthService authService;
 
 	@GetMapping("/register")
 	public String getRegisterPage(Model model) {
@@ -79,15 +89,33 @@ public class UserController {
 	}
 
 	@PostMapping("/login")
-	public String processLogin(LoginForm loginForm, Model model) {
+	public String processLogin(LoginForm loginForm, Model model, HttpServletResponse httpResponse) {
 
-		model.addAttribute("error", new ValidationError("Login feature coming soon!"));
+		Optional<User> optionalUser = userRepository.findByUsernameAndPassword(loginForm.getUsername(),
+				loginForm.getPassword());
 
-		// TODO: validate that username, password exists in db
-		// if so; provide session cookie
-		// otherwise; show error message
+		if (optionalUser.isPresent()) {
+			
+			authService.setSession(httpResponse, optionalUser.get());
+			
+			return "redirect:/dashboard";
+			
+		} else {
 
-		return "login.html";
+			model.addAttribute("error", new ValidationError("It appears you forgot your credentials."));
+
+			return "login.html";
+		}
+
+	}
+	
+	@PostMapping("/logout")
+	public String processLogout(HttpServletRequest httpRequest) {
+		
+		authService.revokeSession(httpRequest);
+
+		return "redirect:/";
+
 	}
 
 }

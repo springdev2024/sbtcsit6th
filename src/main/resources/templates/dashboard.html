@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+	<body>
+		<h1 th:text="'Welcome ' + ${user.fullname}"></h1>
+		
+		<form action="/logout" method="post">
+			<input type="submit" value="Logout" />
+		</form>
+	</body>
+</html>

@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,20 +18,23 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	
+
 	private String fullname;
-	
+
 	private String username;
-	
+
 	private String password;
-	
+
 	private String email;
-	
+
 	@CreationTimestamp
 	private Instant createdAt;
-	
+
+	@Column(unique = true)
+	private String session;
+
 	public User() {
-		
+
 	}
 
 	public long getId() {
@@ -80,7 +84,13 @@ public class User {
 	public void setCreatedAt(Instant createdAt) {
 		this.createdAt = createdAt;
 	}
-	
-	
-	
+
+	public String getSession() {
+		return session;
+	}
+
+	public void setSession(String session) {
+		this.session = session;
+	}
+
 }
