@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.sbtcsit6th.user.User;
 import com.example.sbtcsit6th.user.UserRepository;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,10 +21,6 @@ public class AuthService {
 	private static final int SESSION_LEN = 20;
 	public static String sampleSpace = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	private static final int SAMPLE_LEN = sampleSpace.length();
-
-	public void setup() {
-		System.out.println("");
-	}
 	
 	@Autowired
 	private UserRepository userRepository;

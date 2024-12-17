@@ -22,20 +22,18 @@ public class CustomerController {
 
 		User user = authService.getUser(request);
 		
+		//Authentication
 		if(user == null) {
 			System.out.println("No logged in user found");
 			return "redirect:/login";
 		}
 		
+		//Authorization
 		if(user.getType() != UserType.CUSTOMER) {
 			System.out.println("CUSTOMER type expected");
 			return "redirect:/login";
 		}
-
-//		if (user == null || user.getType() != UserType.CUSTOMER) {
-//			return "redirect:/login";
-//		}
-//		
+		
 		model.addAttribute("user", user);
 
 		return "customer-dashboard.html";

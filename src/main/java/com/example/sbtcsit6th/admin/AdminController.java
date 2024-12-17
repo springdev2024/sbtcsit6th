@@ -8,9 +8,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.example.sbtcsit6th.AuthService;
 import com.example.sbtcsit6th.ValidationError;
 import com.example.sbtcsit6th.product.Product;
 import com.example.sbtcsit6th.product.ProductRepository;
+import com.example.sbtcsit6th.user.User;
+import com.example.sbtcsit6th.user.UserType;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class AdminController {
@@ -18,8 +23,26 @@ public class AdminController {
 	@Autowired
 	private ProductRepository productRepository;
 	
+	@Autowired
+	private AuthService authService;
+
 	@GetMapping("/admin")
-	public String getDashboard() {
+	public String getDashboard(HttpServletRequest request) {
+
+		User user = authService.getUser(request);
+
+		// Authentication
+		if (user == null) {
+			System.out.println("No logged in user found");
+			return "redirect:/login";
+		}
+
+		// Authorization
+		if (user.getType() != UserType.ADMIN) {
+			System.out.println("ADMIN type expected");
+			return "redirect:/login";
+		}
+
 		return "admin-dashboard.html";
 	}
 
