@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class UserController {
+public class AuthController {
 
 	@Autowired
 	private UserRepository userRepository;
@@ -75,6 +75,7 @@ public class UserController {
 
 		}
 
+		user.setType(UserType.CUSTOMER);
 		userRepository.save(user);
 
 		return "redirect:/";
@@ -96,9 +97,17 @@ public class UserController {
 
 		if (optionalUser.isPresent()) {
 			
-			authService.setSession(httpResponse, optionalUser.get());
+			User loggedInUser = optionalUser.get();
 			
-			return "redirect:/dashboard";
+			authService.setSession(httpResponse, loggedInUser);
+						
+			if(loggedInUser.getType() == UserType.CUSTOMER) {
+				return "redirect:/customer";
+			} else if(loggedInUser.getType() == UserType.ADMIN) {
+				return "redirect:/admin";
+			} else {
+				return "redirect:/";
+			}
 			
 		} else {
 

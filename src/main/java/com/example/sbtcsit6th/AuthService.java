@@ -21,6 +21,10 @@ public class AuthService {
 	public static String sampleSpace = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	private static final int SAMPLE_LEN = sampleSpace.length();
 
+	public void setup() {
+		System.out.println("");
+	}
+	
 	@Autowired
 	private UserRepository userRepository;
 

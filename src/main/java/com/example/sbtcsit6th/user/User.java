@@ -6,6 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,9 +34,11 @@ public class User {
 
 	@Column(unique = true)
 	private String session;
+	
+	@Enumerated(EnumType.STRING)
+	private UserType type;
 
 	public User() {
-
 	}
 
 	public long getId() {
@@ -91,6 +95,14 @@ public class User {
 
 	public void setSession(String session) {
 		this.session = session;
+	}
+
+	public UserType getType() {
+		return type;
+	}
+
+	public void setType(UserType type) {
+		this.type = type;
 	}
 
 }
