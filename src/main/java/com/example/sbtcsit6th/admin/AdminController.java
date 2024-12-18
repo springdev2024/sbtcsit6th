@@ -22,7 +22,7 @@ public class AdminController {
 
 	@Autowired
 	private ProductRepository productRepository;
-	
+
 	@Autowired
 	private AuthService authService;
 
@@ -47,20 +47,45 @@ public class AdminController {
 	}
 
 	@GetMapping("/admin/product")
-	public String getProductPage(Model model) {
+	public String getProductPage(Model model, HttpServletRequest request) {
+		User user = authService.getUser(request);
+		
+		// Authentication & Authorization respectively
+		if (user == null || user.getType() != UserType.ADMIN) {
+			System.out.println("No logged in user found");
+			return "redirect:/login";
+		}
+
 		model.addAttribute("products", productRepository.findAll());
 		return "view-product.html";
 	}
 
 	@GetMapping("/admin/product/add")
-	public String getAddProductPage(Model model) {
+	public String getAddProductPage(HttpServletRequest request, Model model) {
+
+		User user = authService.getUser(request);
+
+		// Authentication & Authorization respectively
+		if (user == null || user.getType() != UserType.ADMIN) {
+			System.out.println("No logged in user found");
+			return "redirect:/login";
+		}
+
 		model.addAttribute("product", new Product());
 		model.addAttribute("error", new ValidationError());
 		return "add-product.html";
 	}
 
 	@PostMapping("/admin/product/add")
-	public String addNewProduct(Product product, Model model) {
+	public String addNewProduct(Product product, Model model, HttpServletRequest request) {
+
+		User user = authService.getUser(request);
+
+		// Authentication & Authorization respectively
+		if (user == null || user.getType() != UserType.ADMIN) {
+			System.out.println("No logged in user found");
+			return "redirect:/login";
+		}
 
 		// TODO: laptop bag -> Laptop Bag
 

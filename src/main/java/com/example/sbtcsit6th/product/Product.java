@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Product {
@@ -25,6 +26,9 @@ public class Product {
 
 	@Column(nullable = false)
 	private BigDecimal price;
+	
+	@ManyToOne
+	private ProductCategory category;
 	
 	private String image;
 
@@ -77,6 +81,14 @@ public class Product {
 
 	public void setImage(String image) {
 		this.image = image;
+	}
+
+	public ProductCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(ProductCategory category) {
+		this.category = category;
 	}
 
 }

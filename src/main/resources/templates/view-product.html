@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+	<h1>Products</h1>
+	
+	<div><a href="/admin/product/add">New Product</a></div>
+
+	<table border="2px">
+		<thead>
+			<td>SN</td>
+			<td>Name</td>
+			<td>Category</td>
+			<td>Price</td>
+			<td>Unit</td>
+			<td>Image</td>
+			<td>Actions</td>
+		</thead>
+		<tbody>
+			<tr th:each="product, idx: ${products}">
+				<td th:text="${idx.count}"></td>
+				<td th:text="${product.name}"></td>
+				<td th:if="${product.category}" th:text="${product.category.name}"></td>
+				<td th:text="${product.price}"></td>
+				<td th:text="${product.unit}"></td>
+				<td>Coming soon...</td>
+				<td>Delete | Edit</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<!--<form action="/admin/product/add" method="post" th:object="${product}">
+		<div>
+			<label for="name">Name:</label>
+			<input type="text" th:field="*{name}" />
+		</div>
+
+		<div>
+			<label for="name">Description:</label>
+			<input type="text" th:field="*{description}" />
+		</div>
+
+		<div>
+			<label for="name">UOM:</label>
+			<input type="text" th:field="*{unit}" />
+		</div>
+
+		<div>
+			<label for="name">Price:</label>
+			<input type="number" th:field="*{price}" />
+		</div>
+
+		<div>
+			<input type="file" value="image" />
+		</div>
+		
+		<div>
+			<input type="submit" value="Create" />
+		</div>
+		
+	</form>
+-->
+	<!--<div th:if="${error.hasError}" th:text="${error.msg}" style="color: red"></div>-->
+
+</body>
+
+</html>
