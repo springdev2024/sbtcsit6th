@@ -115,7 +115,7 @@ public class AdminController {
 		// save the product
 		productRepository.save(product);
 
-		return "redirect:/";
+		return "redirect:/admin/product";
 	}
 
 }

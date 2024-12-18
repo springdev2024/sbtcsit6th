@@ -21,6 +21,7 @@
 				<td th:text="${idx.count}"></td>
 				<td th:text="${product.name}"></td>
 				<td th:if="${product.category}" th:text="${product.category.name}"></td>
+				<td th:if="${product.category == null}">No category</td>
 				<td th:text="${product.price}"></td>
 				<td th:text="${product.unit}"></td>
 				<td>Coming soon...</td>
