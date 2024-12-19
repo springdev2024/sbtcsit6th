@@ -11,29 +11,30 @@
 		</div>
 
 		<div>
-			<label for="name">Description:</label>
+			<label for="description">Description:</label>
 			<input type="text" th:field="*{description}" />
 		</div>
 
 		<div>
-			<label for="name">Category:</label>
+			<label for="category">Category:</label>
 			<select th:field="*{category}">
-				<option th:each="category: ${productCategories}" th:text="${category.name}" th:value="${category.id}"></option>
+				<option th:each="cat: ${productCategories}" th:text="${cat.name}" th:value="${cat.id}"></option>
 			</select>
 		</div>
 
 		<div>
-			<label for="name">UOM:</label>
+			<label for="unit">UOM:</label>
 			<input type="text" th:field="*{unit}" />
 		</div>
 
 		<div>
-			<label for="name">Price:</label>
+			<label for="price">Price:</label>
 			<input type="number" th:field="*{price}" />
 		</div>
 
 		<div>
-			<input type="file" value="image" />
+			<label for="image">Image:</label>
+			<input type="file" id="image" value="image" />
 		</div>
 
 		<div>
