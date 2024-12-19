@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.example.sbtcsit6th.AuthService;
 import com.example.sbtcsit6th.ValidationError;
 import com.example.sbtcsit6th.product.Product;
+import com.example.sbtcsit6th.product.ProductCategory;
+import com.example.sbtcsit6th.product.ProductCategoryRepository;
 import com.example.sbtcsit6th.product.ProductRepository;
 import com.example.sbtcsit6th.user.User;
 import com.example.sbtcsit6th.user.UserType;
@@ -22,6 +24,9 @@ public class AdminController {
 
 	@Autowired
 	private ProductRepository productRepository;
+	
+	@Autowired
+	private ProductCategoryRepository productCategoryRepository;
 
 	@Autowired
 	private AuthService authService;
@@ -73,6 +78,7 @@ public class AdminController {
 
 		model.addAttribute("product", new Product());
 		model.addAttribute("error", new ValidationError());
+		model.addAttribute("productCategories", productCategoryRepository.findAll());
 		return "add-product.html";
 	}
 
@@ -116,6 +122,67 @@ public class AdminController {
 		productRepository.save(product);
 
 		return "redirect:/admin/product";
+	}
+	
+	@GetMapping("/admin/productCategory")
+	public String getProductCategoryPage(Model model, HttpServletRequest request) {
+		User user = authService.getUser(request);
+		
+		// Authentication & Authorization respectively
+		if (user == null || user.getType() != UserType.ADMIN) {
+			System.out.println("No logged in user found");
+			return "redirect:/login";
+		}
+
+		model.addAttribute("productCategories", productCategoryRepository.findAll());
+		return "view-productCategory.html";
+	}
+	
+	@GetMapping("/admin/productCategory/add")
+	public String getAddProductCategoryPage(HttpServletRequest request, Model model) {
+
+		User user = authService.getUser(request);
+
+		// Authentication & Authorization respectively
+		if (user == null || user.getType() != UserType.ADMIN) {
+			System.out.println("No logged in user found");
+			return "redirect:/login";
+		}
+
+		model.addAttribute("productCategory", new ProductCategory());
+		model.addAttribute("error", new ValidationError());
+		return "add-productCategory.html";
+	}
+	
+	@PostMapping("/admin/productCategory/add")
+	public String addNewProductCategory(ProductCategory productCategory, Model model, HttpServletRequest request) {
+
+		User user = authService.getUser(request);
+
+		// Authentication & Authorization respectively
+		if (user == null || user.getType() != UserType.ADMIN) {
+			System.out.println("No logged in user found");
+			return "redirect:/login";
+		}
+
+		productCategory.setName(productCategory.getName().strip());
+		productCategory.setDescription(productCategory.getDescription().strip());
+
+		ValidationError error = null;
+
+		if (productCategory.getName().isEmpty()) {
+			error = new ValidationError("Product Category name is required");
+		}
+
+		if (error != null) {
+			model.addAttribute("error", error);
+			return "add-productCategory.html";
+		}
+
+		// save the product
+		productCategoryRepository.save(productCategory);
+
+		return "redirect:/admin/productCategory";
 	}
 
 }

@@ -16,6 +16,13 @@
 		</div>
 
 		<div>
+			<label for="name">Category:</label>
+			<select th:field="*{category}">
+				<option th:each="category: ${productCategories}" th:text="${category.name}" th:value="${category.id}"></option>
+			</select>
+		</div>
+
+		<div>
 			<label for="name">UOM:</label>
 			<input type="text" th:field="*{unit}" />
 		</div>
@@ -28,11 +35,11 @@
 		<div>
 			<input type="file" value="image" />
 		</div>
-		
+
 		<div>
 			<input type="submit" value="Create" />
 		</div>
-		
+
 	</form>
 
 	<div th:if="${error.hasError}" th:text="${error.msg}" style="color: red"></div>
