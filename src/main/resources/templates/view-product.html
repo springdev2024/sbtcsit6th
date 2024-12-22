@@ -3,7 +3,7 @@
 
 <body>
 	<h1>Products</h1>
-	
+
 	<div><a href="/admin/product/add">New Product</a></div>
 
 	<table border="2px">
@@ -24,7 +24,7 @@
 				<td th:if="${product.category == null}">No category</td>
 				<td th:text="${product.price}"></td>
 				<td th:text="${product.unit}"></td>
-				<td>Coming soon...</td>
+				<td><img style="width: 100px" th:if="${product.image != null}" th:src="@{/uploads/{path}(path=${product.image})}" /></td>
 				<td>Delete | Edit</td>
 			</tr>
 		</tbody>

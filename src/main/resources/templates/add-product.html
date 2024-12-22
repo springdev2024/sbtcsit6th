@@ -4,7 +4,7 @@
 <body>
 	<h1>Add New Product</h1>
 
-	<form action="/admin/product/add" method="post" th:object="${product}">
+	<form action="/admin/product/add" method="post" th:object="${product}" enctype="multipart/form-data">
 		<div>
 			<label for="name">Name:</label>
 			<input type="text" th:field="*{name}" />
@@ -34,7 +34,7 @@
 
 		<div>
 			<label for="image">Image:</label>
-			<input type="file" id="image" value="image" />
+			<input type="file" th:field="*{image}" />
 		</div>
 
 		<div>

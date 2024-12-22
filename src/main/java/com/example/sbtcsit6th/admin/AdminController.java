@@ -6,11 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.sbtcsit6th.AuthService;
+import com.example.sbtcsit6th.StorageService;
 import com.example.sbtcsit6th.ValidationError;
+import com.example.sbtcsit6th.product.CreateProductForm;
 import com.example.sbtcsit6th.product.Product;
 import com.example.sbtcsit6th.product.ProductCategory;
 import com.example.sbtcsit6th.product.ProductCategoryRepository;
@@ -31,6 +33,9 @@ public class AdminController {
 
 	@Autowired
 	private AuthService authService;
+	
+	@Autowired
+	private StorageService storageService;
 
 	@GetMapping("/admin")
 	public String getDashboard(HttpServletRequest request) {
@@ -84,7 +89,8 @@ public class AdminController {
 	}
 
 	@PostMapping("/admin/product/add")
-	public String addNewProduct(Product product, Model model, HttpServletRequest request) {
+	public String addNewProduct(@ModelAttribute CreateProductForm form, Model model, HttpServletRequest request) {
+//	public String addNewProduct(Product product, Model model, HttpServletRequest request) {
 
 		User user = authService.getUser(request);
 
@@ -94,23 +100,21 @@ public class AdminController {
 			return "redirect:/login";
 		}
 
-		// TODO: laptop bag -> Laptop Bag
-
-		product.setName(product.getName().strip());
-		product.setUnit(product.getUnit().strip());
-		product.setDescription(product.getDescription().strip());
+		form.setName(form.getName().strip());
+		form.setUnit(form.getUnit().strip());
+		form.setDescription(form.getDescription().strip());
 
 		ValidationError error = null;
 
-		if (product.getName().isEmpty()) {
+		if (form.getName().isEmpty()) {
 			error = new ValidationError("Product name is required");
 		}
 
-		if (product.getUnit().isEmpty()) {
+		if (form.getUnit().isEmpty()) {
 			error = new ValidationError("Unit is required");
 		}
 
-		if (product.getPrice() == null || product.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+		if (form.getPrice() == null || form.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
 			error = new ValidationError("Price must be positive");
 		}
 
@@ -118,7 +122,17 @@ public class AdminController {
 			model.addAttribute("error", error);
 			return "add-product.html";
 		}
-
+		
+		Product product = new Product();
+		product.setCategory(form.getCategory());
+		product.setDescription(form.getDescription());
+		product.setName(form.getName());
+		product.setPrice(form.getPrice());
+		product.setUnit(form.getUnit());
+		
+		String fileName = storageService.store(form.getImage());;
+		product.setImage(fileName);
+		
 		// save the product
 		productRepository.save(product);
 
