@@ -1,6 +1,7 @@
 package com.example.sbtcsit6th.admin;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.sbtcsit6th.AuthService;
+import com.example.sbtcsit6th.Mappings;
 import com.example.sbtcsit6th.StorageService;
 import com.example.sbtcsit6th.ValidationError;
 import com.example.sbtcsit6th.product.CreateProductForm;
@@ -27,17 +29,17 @@ public class AdminController {
 
 	@Autowired
 	private ProductRepository productRepository;
-	
+
 	@Autowired
 	private ProductCategoryRepository productCategoryRepository;
 
 	@Autowired
 	private AuthService authService;
-	
+
 	@Autowired
 	private StorageService storageService;
 
-	@GetMapping("/admin")
+	@GetMapping(Mappings.ADMIN)
 	public String getDashboard(HttpServletRequest request) {
 
 		User user = authService.getUser(request);
@@ -45,33 +47,33 @@ public class AdminController {
 		// Authentication
 		if (user == null) {
 			System.out.println("No logged in user found");
-			return "redirect:/login";
+			return "redirect:" + Mappings.LOGIN;
 		}
 
 		// Authorization
 		if (user.getType() != UserType.ADMIN) {
 			System.out.println("ADMIN type expected");
-			return "redirect:/login";
+			return "redirect:" + Mappings.LOGIN;
 		}
 
 		return "admin-dashboard.html";
 	}
 
-	@GetMapping("/admin/product")
+	@GetMapping(Mappings.ADMIN_PRODUCT)
 	public String getProductPage(Model model, HttpServletRequest request) {
 		User user = authService.getUser(request);
-		
+
 		// Authentication & Authorization respectively
 		if (user == null || user.getType() != UserType.ADMIN) {
 			System.out.println("No logged in user found");
-			return "redirect:/login";
+			return "redirect:" + Mappings.LOGIN;
 		}
 
 		model.addAttribute("products", productRepository.findAll());
 		return "view-product.html";
 	}
 
-	@GetMapping("/admin/product/add")
+	@GetMapping(Mappings.ADMIN_CREATE_PRODUCT)
 	public String getAddProductPage(HttpServletRequest request, Model model) {
 
 		User user = authService.getUser(request);
@@ -79,7 +81,7 @@ public class AdminController {
 		// Authentication & Authorization respectively
 		if (user == null || user.getType() != UserType.ADMIN) {
 			System.out.println("No logged in user found");
-			return "redirect:/login";
+			return "redirect:" + Mappings.LOGIN;
 		}
 
 		model.addAttribute("product", new Product());
@@ -88,7 +90,7 @@ public class AdminController {
 		return "add-product.html";
 	}
 
-	@PostMapping("/admin/product/add")
+	@PostMapping(Mappings.ADMIN_CREATE_PRODUCT)
 	public String addNewProduct(@ModelAttribute CreateProductForm form, Model model, HttpServletRequest request) {
 //	public String addNewProduct(Product product, Model model, HttpServletRequest request) {
 
@@ -97,7 +99,7 @@ public class AdminController {
 		// Authentication & Authorization respectively
 		if (user == null || user.getType() != UserType.ADMIN) {
 			System.out.println("No logged in user found");
-			return "redirect:/login";
+			return "redirect:" + Mappings.LOGIN;
 		}
 
 		form.setName(form.getName().strip());
@@ -110,6 +112,12 @@ public class AdminController {
 			error = new ValidationError("Product name is required");
 		}
 
+		// check if product name already exists
+		Optional<Product> optionalProduct = productRepository.findByName(form.getName());
+		if (optionalProduct.isPresent()) {
+			error = new ValidationError("Product with given name already exists");
+		}
+
 		if (form.getUnit().isEmpty()) {
 			error = new ValidationError("Unit is required");
 		}
@@ -120,40 +128,41 @@ public class AdminController {
 
 		if (error != null) {
 			model.addAttribute("error", error);
+			model.addAttribute("product", form);
 			return "add-product.html";
 		}
-		
+
 		Product product = new Product();
 		product.setCategory(form.getCategory());
 		product.setDescription(form.getDescription());
 		product.setName(form.getName());
 		product.setPrice(form.getPrice());
 		product.setUnit(form.getUnit());
-		
-		String fileName = storageService.store(form.getImage());;
+
+		String fileName = storageService.store(form.getImage());
 		product.setImage(fileName);
-		
+
 		// save the product
 		productRepository.save(product);
 
-		return "redirect:/admin/product";
+		return "redirect:" + Mappings.ADMIN_PRODUCT;
 	}
-	
-	@GetMapping("/admin/productCategory")
+
+	@GetMapping(Mappings.ADMIN_PRODUCT_CATEGORY)
 	public String getProductCategoryPage(Model model, HttpServletRequest request) {
 		User user = authService.getUser(request);
-		
+
 		// Authentication & Authorization respectively
 		if (user == null || user.getType() != UserType.ADMIN) {
 			System.out.println("No logged in user found");
-			return "redirect:/login";
+			return "redirect:" + Mappings.LOGIN;
 		}
 
 		model.addAttribute("productCategories", productCategoryRepository.findAll());
 		return "view-productCategory.html";
 	}
-	
-	@GetMapping("/admin/productCategory/add")
+
+	@GetMapping(Mappings.ADMIN_CREATE_PRODUCT_CATEGORY)
 	public String getAddProductCategoryPage(HttpServletRequest request, Model model) {
 
 		User user = authService.getUser(request);
@@ -168,8 +177,8 @@ public class AdminController {
 		model.addAttribute("error", new ValidationError());
 		return "add-productCategory.html";
 	}
-	
-	@PostMapping("/admin/productCategory/add")
+
+	@PostMapping(Mappings.ADMIN_CREATE_PRODUCT_CATEGORY)
 	public String addNewProductCategory(ProductCategory productCategory, Model model, HttpServletRequest request) {
 
 		User user = authService.getUser(request);
@@ -177,7 +186,7 @@ public class AdminController {
 		// Authentication & Authorization respectively
 		if (user == null || user.getType() != UserType.ADMIN) {
 			System.out.println("No logged in user found");
-			return "redirect:/login";
+			return "redirect:" + Mappings.LOGIN;
 		}
 
 		productCategory.setName(productCategory.getName().strip());

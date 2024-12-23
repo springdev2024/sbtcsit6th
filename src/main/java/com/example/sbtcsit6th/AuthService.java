@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.example.sbtcsit6th.user.User;
 import com.example.sbtcsit6th.user.UserRepository;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

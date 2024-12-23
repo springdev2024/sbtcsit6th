@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.sbtcsit6th.AuthService;
+import com.example.sbtcsit6th.Mappings;
 import com.example.sbtcsit6th.ValidationError;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,14 +25,14 @@ public class AuthController {
 	@Autowired
 	private AuthService authService;
 
-	@GetMapping("/register")
+	@GetMapping(Mappings.REGISTER)
 	public String getRegisterPage(Model model) {
 		model.addAttribute("user", new User());
 		model.addAttribute("error", new ValidationError());
 		return "register.html";
 	}
 
-	@PostMapping("/register")
+	@PostMapping(Mappings.REGISTER)
 	public String postRegisterForm(User user, Model model) {
 
 		/*
@@ -79,18 +80,18 @@ public class AuthController {
 		user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
 		userRepository.save(user);
 
-		return "redirect:/";
+		return "redirect:" + Mappings.HOME;
 
 	}
 
-	@GetMapping("/login")
+	@GetMapping(Mappings.LOGIN)
 	public String getLoginPage(Model model) {
 		model.addAttribute("loginForm", new LoginForm());
 		model.addAttribute("error", new ValidationError());
 		return "login.html";
 	}
 
-	@PostMapping("/login")
+	@PostMapping(Mappings.LOGIN)
 	public String processLogin(LoginForm loginForm, Model model, HttpServletResponse httpResponse) {
 
 		Optional<User> optionalUser = userRepository.findByUsername(loginForm.getUsername());
@@ -104,9 +105,9 @@ public class AuthController {
 			if (loggedInUser.getType() == UserType.CUSTOMER) {
 				return "redirect:/customer";
 			} else if (loggedInUser.getType() == UserType.ADMIN) {
-				return "redirect:/admin";
+				return "redirect:" + Mappings.ADMIN;
 			} else {
-				return "redirect:/";
+				return "redirect:" + Mappings.HOME;
 			}
 
 		} else {
@@ -123,7 +124,7 @@ public class AuthController {
 
 		authService.revokeSession(httpRequest);
 
-		return "redirect:/";
+		return "redirect:" + Mappings.HOME;
 
 	}
 
