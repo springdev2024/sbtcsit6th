@@ -1,9 +1,9 @@
 package com.example.sbtcsit6th.user;
 
-
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,6 +76,7 @@ public class AuthController {
 		}
 
 		user.setType(UserType.CUSTOMER);
+		user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
 		userRepository.save(user);
 
 		return "redirect:/";
@@ -92,23 +93,22 @@ public class AuthController {
 	@PostMapping("/login")
 	public String processLogin(LoginForm loginForm, Model model, HttpServletResponse httpResponse) {
 
-		Optional<User> optionalUser = userRepository.findByUsernameAndPassword(loginForm.getUsername(),
-				loginForm.getPassword());
+		Optional<User> optionalUser = userRepository.findByUsername(loginForm.getUsername());
 
-		if (optionalUser.isPresent()) {
-			
+		if (optionalUser.isPresent() && BCrypt.checkpw(loginForm.getPassword(), optionalUser.get().getPassword())) {
+
 			User loggedInUser = optionalUser.get();
-			
+
 			authService.setSession(httpResponse, loggedInUser);
-						
-			if(loggedInUser.getType() == UserType.CUSTOMER) {
+
+			if (loggedInUser.getType() == UserType.CUSTOMER) {
 				return "redirect:/customer";
-			} else if(loggedInUser.getType() == UserType.ADMIN) {
+			} else if (loggedInUser.getType() == UserType.ADMIN) {
 				return "redirect:/admin";
 			} else {
 				return "redirect:/";
 			}
-			
+
 		} else {
 
 			model.addAttribute("error", new ValidationError("It appears you forgot your credentials."));
@@ -117,10 +117,10 @@ public class AuthController {
 		}
 
 	}
-	
+
 	@PostMapping("/logout")
 	public String processLogout(HttpServletRequest httpRequest) {
-		
+
 		authService.revokeSession(httpRequest);
 
 		return "redirect:/";
